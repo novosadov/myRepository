@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <locale.h>
 
-#define SIZE_ARRAY 10
+#define SIZE_ARRAY 5
 
 /*
 Напишите программу, которая создает двухмерный массив и заполняет его по
@@ -12,18 +12,17 @@
 массив вывести на экран.
 */
 
-void shitaetMassiv(int array[], int size, int number);
+int shitaetMassiv(int array[SIZE_ARRAY][SIZE_ARRAY], int size, int number);
 void printArray(int array[], int size);
 
 int main()
 {
 	setlocale(LC_ALL, "rus");
 
-	int array[SIZE_ARRAY];
+	int array[SIZE_ARRAY][SIZE_ARRAY];
 	int size = SIZE_ARRAY;
 	int number = 0;
-	printf("Введите число от 1 до 100 \n");
-	scanf("%i", &number);
+	
 	shitaetMassiv(array, size, number);
 	printArray(array, size);
 	return 0;
@@ -31,22 +30,34 @@ int main()
 
 
 //считает и выводит массив на экран
-void shitaetMassiv(int array[], int size, int number)
+int shitaetMassiv(int array[SIZE_ARRAY][SIZE_ARRAY], int size, int number)
 {
+	
 	for (int i = 0; i < size; i++)
 	{		
-		array[i] = number;
-		number = number * 2;
+		printf("Введите число от 1 до 100 \n");
+		scanf("%i", &number);
+		for (int j = 0; j < size; j++)
+		{			
+			array[i][j] = number;
+			number = number * 2;
+		}		
 	}
+	printf("\n");
+	return array;
 }
 
 
 //Выводит массив на экран
-void printArray(int array[], int size)
+void printArray(int array[SIZE_ARRAY][SIZE_ARRAY], int size)
 {
 	for (int i = 0; i < size; i++)
-	{
-		printf("%i ", array[i]);
+	{		
+		for (int j = 0; j < size; j++)
+		{
+			printf("%i\t", array[i][j]);
+		}
+		printf("\n");
 	}
 	printf("\n");
 }
