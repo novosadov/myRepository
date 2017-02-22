@@ -40,6 +40,6 @@ int printFactorial(int* number)
 	else
 	{
 		int temp = *number - 1;
-		return *number *printFactorial(&temp);
+		return *number * printFactorial(&temp);
 	}
 }
