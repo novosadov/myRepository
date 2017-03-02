@@ -18,7 +18,7 @@
 
 void fillArray(int array[SIZE_ARRAY], int size);
 void printArray(int array[SIZE_ARRAY], int size);
-void summaMassivov(int array[SIZE_ARRAY], int array2[SIZE_ARRAY], int array3[SIZE_ARRAY], int size);
+void summaMassivov(int array[SIZE_ARRAY], int* array2[SIZE_ARRAY], int* array3[SIZE_ARRAY], int* size);
 
 
 int main()
@@ -36,7 +36,7 @@ int main()
 	fillArray(array2, size);
 	printArray(array2, size);
 
-	summaMassivov(array, array2, array3, size);
+	summaMassivov(array, &array2, &array3, &size);
 	printArray(array3, size);
 	
 	return 0;
@@ -67,10 +67,14 @@ void printArray(int array[SIZE_ARRAY], int size)
 
 
 
-void summaMassivov(int array[SIZE_ARRAY], int array2[SIZE_ARRAY], int array3[SIZE_ARRAY], int size)
+void summaMassivov(int array[SIZE_ARRAY], int* array2[SIZE_ARRAY], int* array3[SIZE_ARRAY], int* size)
 {
-	for (int i = 0; i < size; i++)
+	
+	for (int i = 0; i < *size; i++)
+
 	{
-		array3[i] = array2[i] + array[i];
+		array3[i]= array[i] + array2[i];
+		
 	}
+	printf("\n");
 }
