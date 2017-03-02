@@ -92,3 +92,67 @@ int fooAction(int* array1, int* array2, int* size1, int* size2)
 	}
 	return 0;
 }
+
+
+
+//Заполняет массив случайными числами
+void creatArray(int* array, int* size)
+{
+	for (int i = 0; i < *size; i++)
+	{
+		*(array + i) = rand() % 100;
+	}
+}
+
+//Выводит массив на экран
+void printArray(int* array, int* size)
+{
+	for (int i = 0; i < *size; i++)
+	{
+		printf("%i ", *(array + i));
+	}
+	printf("\n");
+}
+
+
+int maxNumber(int* array, int* size)
+{
+	int max = *array;
+
+	for (int i = 1; i < *size; i++)
+	{
+		if (*(array + i) > max)
+		{
+			max = *(array + i);
+		}
+	}
+	return max;
+}
+
+
+int minNumber(int* array, int* size)
+{
+	int min = *array;
+
+	for (int i = 0; i < *size; i++)
+	{
+		if (*(array + i) < min)
+		{
+			min = *(array + i);
+		}	
+	}
+	return min;
+}
+
+int avgNumber(int* array, int* size)
+{
+	float sum = 0;
+	float avg = 0;
+
+	for (int i = 0; i < *size; i++)
+	{
+		sum += *(array + i);		
+	}
+	avg = sum / (*size);
+	return avg;
+}
