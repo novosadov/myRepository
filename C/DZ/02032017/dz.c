@@ -29,6 +29,7 @@ enum UserMenu
 float srednee;
 void creatArray(int* array, int* size);
 void printArray(int* array, int* size);
+// Не вижу указателя на функцию, переданного в другую функцию
 int fooAction(int* array1, int* array2, int* size1, int* size2);
 int maxNumber(int* array, int* size);
 int minNumber(int* array, int* size);
