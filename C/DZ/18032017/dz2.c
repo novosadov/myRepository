@@ -35,9 +35,10 @@ void  printString(char *str)
 
 void proveryaetAnagramma(char* str)
 {			
-	for (int i = 0; i < strlen(str); i++)
+	int len = strlen(str)-1;
+	for (int i = 0; i < len; i++)
 	{
-		if (str[i] != str[(strlen(str)) - 1 - i])
+		if (str[i] != str[len - 1 - i])
 		{
 			printf("No\n");			
 			break;
