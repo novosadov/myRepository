@@ -68,7 +68,7 @@ void sort(char** list, int studentCount)
 	{
 		for (int j = 0; j < studentCount - 1 - i; j++)
 		{
-			if (strcmp(list[j]))
+			if (strcmp(list[j], list[j + 1])==1)
 			{
 				char* temp = list[j];
 				list[j] = list[j + 1];
