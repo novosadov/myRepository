@@ -5,6 +5,7 @@
 
 #define STUDENT 5
 
+
 /* Написать программу, которая дает пользователю ввести 5 фамилий студентов и хранит их
 в динамическом массиве, а затем сортирует их по возрастанию.
 */
@@ -22,6 +23,12 @@ int main()
 
 	int studentCount = STUDENT;
 	char** list = malloc(sizeof(char*) * STUDENT);
+	if (list == NULL)
+	{
+		printf("ERROR");
+		return;
+	}
+
 	for (int i = 0; i < STUDENT; i++)
 	{
 		list[i] = malloc(50 * sizeof(char));
@@ -81,9 +88,17 @@ void sort(char** list, int studentCount)
 
 void delList(char** list, int studentCount)
 {
+
+	if (list == NULL)
+	{
+		printf("ERROR");
+		return;
+	}
+
 	for (int i = 0; i < studentCount; i++)
 	{
 		free(list[i]);
 	}
 	free(list);
+
 }
