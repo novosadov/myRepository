@@ -13,6 +13,7 @@
 void zapolnenieDannih(char** list, int studentCount);
 void printSpisok(char** list, int studentCount);
 void sort(char** list, int studentCount);
+void delList(char** list, int studentCount);
 
 
 int main()
@@ -30,6 +31,9 @@ int main()
 	
 	sort(list, studentCount);
 	printSpisok(list, studentCount);
+
+
+	delList(list, studentCount);
 
 	return 0;
 }
@@ -72,4 +76,14 @@ void sort(char** list, int studentCount)
 			}
 		}
 	}
+}
+
+
+void delList(char** list, int studentCount)
+{
+	for (int i = 0; i < studentCount; i++)
+	{
+		free(list[i]);
+	}
+	free(list);
 }
