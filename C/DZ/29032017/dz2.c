@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<locale.h>
+#include <string.h>
 
 #define STRUCT_SIZE 3
 
@@ -12,123 +13,111 @@
 */
 
 
-enum Type
+enum FuelType
 {
-	BeginType,
-	Brand,
-	Model,
-	Color,
-	FuelType,
-	Year,
-	EndType
+	FuelTypeBenz80 = 80,
+	FuelTypeBenz92 = 92,
+	FuelTypeBenz95 = 95	
 };
 
-union Data
+struct Car
 {
-	char* valueStr;
-	int valueYear;
+	char* Brand;
+	char* Model;
+	char* Color;
+	enum FuelType FuelType;
+	int Year;
 };
 
-struct DataItem
-{
-	enum valueType type;
-	union Data data;
-};
+void getString(char* message, char* st, int maxStringSize);
+void clean();
+void printCarsFilteredByYear(struct Car* cars, int carsCount, int year);
+void getInt(char* message, int* value);
 
-
-
-void print(struct DataItem* values);
-void clearChar();
-
-
-
-void main()
+int main()
 {
 	setlocale(LC_ALL, "rus");
-	struct DataItem values[STRUCT_SIZE];
-	printf("Характеристики:\n %i - Марка\n %i - Модель\n %i - Цвет\n%i - Топливо\n%i - Год\n",
-		Brand, Model, Color, FuelType, Year);
-	enum Type type;
-	for (int i = 0; i < STRUCT_SIZE; i++)
-	{
-		do
-		{
-			printf("# Введите характеристики %i автомобиля\n", i + 1);
-			scanf("%i", &type);
-		} while (type >= EndType || type <= BeginType);
-		clearChar();
-		switch (type)
-		{
-		case Brand:
-			printf("Введите марку автомобиля: ");
-			scanf("%s\n", &values[i].data.valueStr);
-			values[i].type = Brand;
-			break;
-		case Model:
-			printf("Введите модель автомобиля: ");
-			scanf("%s\n", &values[i].data.valueStr);
-			values[i].type = Model;
-			break;
-		case Color:
-			printf("Введите цвет автомобиля: ");
-			scanf("%s\n", &values[i].data.valueStr);
-			values[i].type = Color;
-			break;
-		case FuelType:
-			printf("Введите вид топлива: ");
-			scanf("%s\n", &values[i].data.valueStr);
-			values[i].type = Brand;
-			break;
-		case Year:
-			printf("Введите год автомобиля: ");
-			scanf("%i\n", &values[i].data.valueYear);
-			values[i].type = Brand;
-			break;
-		default:
-			printf("Error ");
+	printf("Введите количество автомобилей: ");
+	int carCount;
+	scanf("%i", &carCount);
+	clean();
 
-			break;
-		}
+	struct Car* car = malloc(carCount * sizeof(struct Car));
+
+	int i = 0;
+	while (i < carCount)
+	{
+		printf("Введите #%i автомобиль: \n", i + 1);
+		car[i].Brand = malloc(30);
+		getString("Марка: ", car[i].Brand, 30);
+		car[i].Model = malloc(30);
+		getString("Модель: ", car[i].Model, 30);
+		car[i].Color = malloc(30);
+		getString("Цвет: ", car[i].Color, 30);
+		getInt("Год выпуска: ", (int*)&car[i].Year);		
+		getInt("Вид топлива: \n80\n92\n95\n", (int*)&car[i].FuelType);
+		clean();
+		i++;
 	}
-	print(values);
+
+	printf("Введите год, младше которого надо вывести автомобили: ");
+	int year;
+	scanf("%i", &year);
+	printCarsFilteredByYear(car, carCount, year);
+	
 }
 
-
-
-void print(struct DataItem* values)
+void getString(char* message, char* st, int maxStringSize)
 {
-	for (int i = 0; i < STRUCT_SIZE; i++)
+	char* find;
+
+	printf("%s", message);
+	char* result = fgets(st, maxStringSize, stdin);
+	if (result != NULL)
 	{
-		switch (values[i].type)
+		find = strchr(st, '\n');
+		if (find != NULL)
 		{
-		case Brand:
-			printf("%s\n", values[i].data.valueStr);
-			break;
-		case Model:
-			printf("%s\n", values[i].data.valueStr);
-			break;
-		case Color:
-			printf("%s\n", values[i].data.valueStr);
-			break;
-		case FuelType:
-			printf("%s\n", values[i].data.valueStr);
-			break;
-		case Year:
-			printf("%i\n", values[i].data.valueYear);
-			break;
-		default:
-			printf("%s\n", values[i].data.valueStr);
-			break;
+			*find = 0;
+		}
+		else
+		{
+			clean();
 		}
 	}
 }
 
+void getInt(char* message, int* value)
+{
+	printf("%s", message);
+	scanf("%i", &value);
+}
 
-void clearChar()
+void clean()
 {
 	char ch;
 	do
 	{
 		ch = getchar();
 	} while (ch != '\n' && ch != EOF);
+}
+
+void printCar(struct Car* car)
+{
+	printf("Марка:\t%s\n", car->Brand);
+	printf("Модель:\t%s\n", car->Model);
+	printf("Тип топлива:\t%i\n", car->FuelType);
+	printf("Цвет:\t%c\n", car->Color);
+	printf("Год:\t%i\n\n", car->Year);
+}
+
+void printCarsFilteredByYear(struct Car* cars, int carsCount, int year)
+{
+	for (int i = 0; i < carsCount; i++)
+	{
+		if (cars[i].Year > year)
+		{
+			printCar(&cars[i]);
+		}
+	}
 }
