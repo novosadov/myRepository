@@ -90,7 +90,7 @@ void getString(char* message, char* st, int maxStringSize)
 void getInt(char* message, int* value)
 {
 	printf("%s", message);
-	scanf("%i", &value);
+	scanf("%i", value);
 }
 
 void clean()
@@ -107,7 +107,7 @@ void printCar(struct Car* car)
 	printf("Марка:\t%s\n", car->Brand);
 	printf("Модель:\t%s\n", car->Model);
 	printf("Тип топлива:\t%i\n", car->FuelType);
-	printf("Цвет:\t%c\n", car->Color);
+	printf("Цвет:\t%s\n", car->Color);
 	printf("Год:\t%i\n\n", car->Year);
 }
 
