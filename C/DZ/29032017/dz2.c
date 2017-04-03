@@ -24,7 +24,7 @@ enum Type
 };
 
 union Data
-{	
+{
 	char* valueStr;
 	int valueYear;
 };
@@ -46,7 +46,7 @@ void main()
 {
 	setlocale(LC_ALL, "rus");
 	struct DataItem values[STRUCT_SIZE];
-	printf("Характеристики:\n %s - Марка\n %s - Модель\n %s - Цвет\n%s - Топливо\n%i - Год\n",
+	printf("Характеристики:\n %i - Марка\n %i - Модель\n %i - Цвет\n%i - Топливо\n%i - Год\n",
 		Brand, Model, Color, FuelType, Year);
 	enum Type type;
 	for (int i = 0; i < STRUCT_SIZE; i++)
@@ -86,7 +86,7 @@ void main()
 			break;
 		default:
 			printf("Error ");
-			
+
 			break;
 		}
 	}
