@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<locale.h>
-
+#include<stdlib.h>
 
 /*
 Написать программу, которая получает от пользователя количество дней измерений
@@ -30,7 +30,7 @@ void main()
 	printf("Введите количество дней\n");
 	scanf("%i", &daycount);
 
-	struct Day** day = malloc(sizeof(struct Day**) * daycount);
+	struct Day** day = malloc(sizeof(struct Day*) * daycount);
 	if (day == NULL)
 	{
 		printf("ERROR");
@@ -40,16 +40,19 @@ void main()
 
 	for (int i = 0; i < daycount; i++)
 	{
+		day[i] = malloc(sizeof(struct Day));
+	}
+
+	for (int i = 0; i < daycount; i++)
+	{
 		printf("Введите данные за %i день\n", i + 1);
 		for (int j = 0; j < 2; j++)
 		{
 			printf("Введите дату");
-			scanf("%i", &((*day)[i].date));
+			scanf("%i", &((*day[i]).date));
 			printf("Введите температуру");
-			scanf("%f", &((*day)[i].temperature));
+			scanf("%f", &((*day[i]).temperature));
 		}
 
 	}
 }
-
-
