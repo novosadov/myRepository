@@ -21,11 +21,11 @@ int main()
 		}
 		else
 		{
-			buff[i] = '*';
+			buff[i] = ' ';
 		}		
 	}
 
-	for (int i = 0; i <= 4112050; i++)
+	for (int i = 0; i <= 1024 * 1024 * 4; i++)
 	{
 		fputs(buff, file);
 	}
