@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <locale.h>
-#define SIZE_ARRAY 10
-
-
+#define ARRAY_SIZE_ARRAY
 
 /*
 Используя указатель на массив целых чисел, изменить порядок следования элементов
@@ -11,7 +9,7 @@
 */
 
 void printArray(int* array, int* size);
-void smenaArray(int* array, int* size);
+void reverseArray(int* array, int* size);
 
 int main()
 {
@@ -43,7 +41,7 @@ void printArray(int* array, int* size)
 
 
 
-void smenaArray(int* array, int* size)
+void reverseArray(int* array, int* size)
 {
 	for (int i = 0, j = *size / 2; i<j; i++)
 	{
