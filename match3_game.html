@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Три в ряд</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            color: #333;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            background: #333;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            position: relative;
+        }
+
+        .cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell.selected {
+            background: #ffd700;
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        .cell.matched {
+            animation: match 0.5s ease-out;
+        }
+
+        .cell.falling {
+            animation: fall 0.5s ease-in;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes match {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd6;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            display: block;
+        }
+
+        .gem-0 { content: "🔴"; }
+        .gem-1 { content: "🔵"; }
+        .gem-2 { content: "🟢"; }
+        .gem-3 { content: "🟡"; }
+        .gem-4 { content: "🟣"; }
+        .gem-5 { content: "🟠"; }
+
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .cell {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🎮 Три в ряд</h1>
+        </div>
+        
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">Очки</div>
+                <div class="score-value" id="score">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Ходы</div>
+                <div class="score-value" id="moves">20</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Рекорд</div>
+                <div class="score-value" id="high-score">0</div>
+            </div>
+        </div>
+
+        <div class="game-board" id="game-board"></div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="game.newGame()">Новая игра</button>
+            <button class="btn btn-secondary" onclick="game.hint()">Подсказка</button>
+        </div>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        class Match3Game {
+            constructor() {
+                this.rows = 8;
+                this.cols = 8;
+                this.gemTypes = 6;
+                this.board = [];
+                this.selectedCell = null;
+                this.score = 0;
+                this.moves = 20;
+                this.highScore = localStorage.getItem('match3HighScore') || 0;
+                this.isProcessing = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.updateUI();
+                this.newGame();
+            }
+
+            newGame() {
+                this.board = [];
+                this.score = 0;
+                this.moves = 20;
+                this.selectedCell = null;
+                this.isProcessing = false;
+                this.hideMessage();
+                
+                // Создаем начальную доску без совпадений
+                for (let row = 0; row < this.rows; row++) {
+                    this.board[row] = [];
+                    for (let col = 0; col < this.cols; col++) {
+                        let gemType;
+                        do {
+                            gemType = Math.floor(Math.random() * this.gemTypes);
+                        } while (
+                            (col >= 2 && this.board[row][col-1] === gemType && this.board[row][col-2] === gemType) ||
+                            (row >= 2 && this.board[row-1][col] === gemType && this.board[row-2][col] === gemType)
+                        );
+                        this.board[row][col] = gemType;
+                    }
+                }
+                
+                this.renderBoard();
+                this.updateUI();
+            }
+
+            renderBoard() {
+                const boardElement = document.getElementById('game-board');
+                boardElement.innerHTML = '';
+                
+                for (let row = 0; row < this.rows; row++) {
+                    for (let col = 0; col < this.cols; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        const gemType = this.board[row][col];
+                        if (gemType !== null) {
+                            cell.textContent = this.getGemEmoji(gemType);
+                            cell.classList.add(`gem-${gemType}`);
+                        }
+                        
+                        cell.addEventListener('click', () => this.handleCellClick(row, col));
+                        boardElement.appendChild(cell);
+                    }
+                }
+            }
+
+            getGemEmoji(type) {
+                const emojis = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠'];
+                return emojis[type];
+            }
+
+            handleCellClick(row, col) {
+                if (this.isProcessing || this.moves <= 0) return;
+                
+                const cell = this.getCellElement(row, col);
+                
+                if (!this.selectedCell) {
+                    // Выбираем первую ячейку
+                    this.selectedCell = { row, col };
+                    cell.classList.add('selected');
+                } else {
+                    // Выбираем вторую ячейку
+                    const prevCell = this.getCellElement(this.selectedCell.row, this.selectedCell.col);
+                    prevCell.classList.remove('selected');
+                    
+                    if (this.isAdjacent(this.selectedCell, { row, col })) {
+                        this.swapGems(this.selectedCell, { row, col });
+                    } else {
+                        // Если не соседние, выбираем новую ячейку
+                        this.selectedCell = { row, col };
+                        cell.classList.add('selected');
+                        return;
+                    }
+                    
+                    this.selectedCell = null;
+                }
+            }
+
+            isAdjacent(cell1, cell2) {
+                const rowDiff = Math.abs(cell1.row - cell2.row);
+                const colDiff = Math.abs(cell1.col - cell2.col);
+                return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
+            }
+
+            async swapGems(cell1, cell2) {
+                this.isProcessing = true;
+                
+                // Меняем местами камни
+                const temp = this.board[cell1.row][cell1.col];
+                this.board[cell1.row][cell1.col] = this.board[cell2.row][cell2.col];
+                this.board[cell2.row][cell2.col] = temp;
+                
+                this.renderBoard();
+                
+                // Проверяем совпадения
+                const matches = this.findMatches();
+                
+                if (matches.length > 0) {
+                    this.moves--;
+                    await this.processMatches(matches);
+                } else {
+                    // Возвращаем обратно, если нет совпадений
+                    await this.sleep(300);
+                    const temp2 = this.board[cell1.row][cell1.col];
+                    this.board[cell1.row][cell1.col] = this.board[cell2.row][cell2.col];
+                    this.board[cell2.row][cell2.col] = temp2;
+                    this.renderBoard();
+                    this.showMessage('Нет совпадений!', 'info');
+                }
+                
+                this.isProcessing = false;
+                this.updateUI();
+                
+                if (this.moves <= 0) {
+                    this.endGame();
+                }
+            }
+
+            findMatches() {
+                const matches = [];
+                
+                // Проверка горизонтальных совпадений
+                for (let row = 0; row < this.rows; row++) {
+                    for (let col = 0; col < this.cols - 2; col++) {
+                        const gemType = this.board[row][col];
+                        if (gemType !== null &&
+                            this.board[row][col + 1] === gemType &&
+                            this.board[row][col + 2] === gemType) {
+                            
+                            let matchLength = 3;
+                            while (col + matchLength < this.cols && 
+                                   this.board[row][col + matchLength] === gemType) {
+                                matchLength++;
+                            }
+                            
+                            for (let i = 0; i < matchLength; i++) {
+                                matches.push({ row, col: col + i });
+                            }
+                        }
+                    }
+                }
+                
+                // Проверка вертикальных совпадений
+                for (let col = 0; col < this.cols; col++) {
+                    for (let row = 0; row < this.rows - 2; row++) {
+                        const gemType = this.board[row][col];
+                        if (gemType !== null &&
+                            this.board[row + 1][col] === gemType &&
+                            this.board[row + 2][col] === gemType) {
+                            
+                            let matchLength = 3;
+                            while (row + matchLength < this.rows && 
+                                   this.board[row + matchLength][col] === gemType) {
+                                matchLength++;
+                            }
+                            
+                            for (let i = 0; i < matchLength; i++) {
+                                matches.push({ row: row + i, col });
+                            }
+                        }
+                    }
+                }
+                
+                // Удаляем дубликаты
+                const uniqueMatches = [];
+                const seen = new Set();
+                for (const match of matches) {
+                    const key = `${match.row},${match.col}`;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        uniqueMatches.push(match);
+                    }
+                }
+                
+                return uniqueMatches;
+            }
+
+            async processMatches(matches) {
+                // Подсчет очков
+                const points = matches.length * 10 + (matches.length > 3 ? (matches.length - 3) * 20 : 0);
+                this.score += points;
+                
+                // Анимация совпадений
+                for (const match of matches) {
+                    const cell = this.getCellElement(match.row, match.col);
+                    cell.classList.add('matched');
+                }
+                
+                await this.sleep(500);
+                
+                // Удаляем совпавшие камни
+                for (const match of matches) {
+                    this.board[match.row][match.col] = null;
+                }
+                
+                // Падающие камни
+                this.applyGravity();
+                this.renderBoard();
+                
+                // Добавляем анимацию падения
+                for (let row = 0; row < this.rows; row++) {
+                    for (let col = 0; col < this.cols; col++) {
+                        if (this.board[row][col] !== null) {
+                            const cell = this.getCellElement(row, col);
+                            cell.classList.add('falling');
+                        }
+                    }
+                }
+                
+                await this.sleep(500);
+                
+                // Проверяем новые совпадения
+                const newMatches = this.findMatches();
+                if (newMatches.length > 0) {
+                    await this.sleep(300);
+                    await this.processMatches(newMatches);
+                }
+            }
+
+            applyGravity() {
+                for (let col = 0; col < this.cols; col++) {
+                    let emptyRow = this.rows - 1;
+                    
+                    // Сдвигаем камни вниз
+                    for (let row = this.rows - 1; row >= 0; row--) {
+                        if (this.board[row][col] !== null) {
+                            this.board[emptyRow][col] = this.board[row][col];
+                            if (emptyRow !== row) {
+                                this.board[row][col] = null;
+                            }
+                            emptyRow--;
+                        }
+                    }
+                    
+                    // Заполняем верхние пустые ячейки новыми камнями
+                    for (let row = emptyRow; row >= 0; row--) {
+                        this.board[row][col] = Math.floor(Math.random() * this.gemTypes);
+                    }
+                }
+            }
+
+            getCellElement(row, col) {
+                return document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            }
+
+            updateUI() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('moves').textContent = this.moves;
+                document.getElementById('high-score').textContent = this.highScore;
+            }
+
+            hint() {
+                if (this.isProcessing || this.moves <= 0) return;
+                
+                // Ищем возможный ход
+                for (let row = 0; row < this.rows; row++) {
+                    for (let col = 0; col < this.cols; col++) {
+                        // Пробуем поменять с правой ячейкой
+                        if (col < this.cols - 1) {
+                            const temp = this.board[row][col];
+                            this.board[row][col] = this.board[row][col + 1];
+                            this.board[row][col + 1] = temp;
+                            
+                            if (this.findMatches().length > 0) {
+                                // Возвращаем обратно
+                                const temp2 = this.board[row][col];
+                                this.board[row][col] = this.board[row][col + 1];
+                                this.board[row][col + 1] = temp2;
+                                
+                                this.highlightHint(row, col, row, col + 1);
+                                return;
+                            }
+                            
+                            // Возвращаем обратно
+                            const temp2 = this.board[row][col];
+                            this.board[row][col] = this.board[row][col + 1];
+                            this.board[row][col + 1] = temp2;
+                        }
+                        
+                        // Пробуем поменять с нижней ячейкой
+                        if (row < this.rows - 1) {
+                            const temp = this.board[row][col];
+                            this.board[row][col] = this.board[row + 1][col];
+                            this.board[row + 1][col] = temp;
+                            
+                            if (this.findMatches().length > 0) {
+                                // Возвращаем обратно
+                                const temp2 = this.board[row][col];
+                                this.board[row][col] = this.board[row + 1][col];
+                                this.board[row + 1][col] = temp2;
+                                
+                                this.highlightHint(row, col, row + 1, col);
+                                return;
+                            }
+                            
+                            // Возвращаем обратно
+                            const temp2 = this.board[row][col];
+                            this.board[row][col] = this.board[row + 1][col];
+                            this.board[row + 1][col] = temp2;
+                        }
+                    }
+                }
+                
+                this.showMessage('Нет доступных ходов! Нажмите "Новая игра"', 'info');
+            }
+
+            highlightHint(row1, col1, row2, col2) {
+                const cell1 = this.getCellElement(row1, col1);
+                const cell2 = this.getCellElement(row2, col2);
+                
+                cell1.style.background = '#ffd700';
+                cell2.style.background = '#ffd700';
+                
+                setTimeout(() => {
+                    cell1.style.background = '';
+                    cell2.style.background = '';
+                }, 1000);
+                
+                this.showMessage('Подсказка показана!', 'success');
+            }
+
+            endGame() {
+                if (this.score > this.highScore) {
+                    this.highScore = this.score;
+                    localStorage.setItem('match3HighScore', this.highScore);
+                    this.showMessage(`Поздравляем! Новый рекорд: ${this.score}`, 'success');
+                } else {
+                    this.showMessage(`Игра окончена! Ваш счет: ${this.score}`, 'info');
+                }
+                this.updateUI();
+            }
+
+            showMessage(text, type) {
+                const messageEl = document.getElementById('message');
+                messageEl.textContent = text;
+                messageEl.className = `message ${type}`;
+                
+                setTimeout(() => {
+                    this.hideMessage();
+                }, 3000);
+            }
+
+            hideMessage() {
+                document.getElementById('message').className = 'message';
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Инициализация игры
+        const game = new Match3Game();
+    </script>
+</body>
+</html>
